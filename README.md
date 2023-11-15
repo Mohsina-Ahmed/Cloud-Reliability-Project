@@ -6,54 +6,46 @@ Reliability Project
 
 ## Project Overview
 
-In this project, our team was commissioned by a organisation that delivers software and services to several veterinary hospitals. Our primary goal was to enhance the reliability of their existing application, HOSP, while ensuring its core functionality remained intact. Additionally, we undertook the responsibility of implementing various improvements and incorporating new features to elevate the overall user experience.
+In this project, our team collaborated with an organization providing software and services to multiple veterinary hospitals. The main objective was to improve the reliability of their current application, HOSP, while preserving its core functionality. We also took on the task of introducing enhancements and integrating new features to enhance the overall user experience.
 
+## The HOSP system (Load balancer and API documentation)
 
-## The HOSP system
-Unfortunately we didnt have access to the source code due to a licensing issue, but we did have access to the load balancer on AWS and the API documentation.</br>
+Regrettably, we lacked access to the source code due to licensing constraints. However, we did have entry to the load balancer on AWS and comprehensive API documentation</br>
 ![HOSP Diagram](/diagrams/HOSP-diagram.jpg)
-
-
 
 ## Approach and Investigation
 
-Our initial focus was on enhancing the system's reliability. To address user reported issues, we delved into the problem by utilising Amazon CloudWatch to analyse the application logs. Through this investigation, we discovered a significant volume of failed API requests occurring at the server endpoints. This crucial insight allowed us to pinpoint the root causes of the issues users were experiencing.
-
+Our primary concentration was on fortifying the system's reliability. In response to user-reported issues, we probed into the matter using Amazon CloudWatch to scrutinize the application logs. This exploration unveiled a notable surge in unsuccessful API requests at the server endpoints. This pivotal revelation empowered us to identify the underlying triggers of the challenges faced by users.
 
 ## Implementation of NGINX Reverse Proxy Server
 
-To tackle the challenge of failed API requests, we implemented an NGINX reverse proxy server deployed on an AWS EC2 instance. This strategic deployment was designed to automatically retry the failed requests, resulting in a remarkable reduction in the overall number of failures. By leveraging this solution, we effectively enhanced the system's resilience and ensured a smoother user experience.
+In addressing the issue of unsuccessful API requests, we introduced an NGINX reverse proxy server deployed on an AWS EC2 instance. Two NGINX servers operated concurrently in this approach, strategically engineered to initiate automatic retries for failed requests (500/502). The outcome was a substantial decrease in the overall failure rate. Through the implementation of this solution, we successfully bolstered the system's resilience, leading to a more seamless user experience. We encountered a challenge when attempting to integrate SSL certificates with NGINX, as the one obtained from ACM was incompatible for use with NGINX. Consequently, we transitioned to CloudFront to address this issue.
 
 ![dashboard](/diagrams/dashboard.png)
 
+## Implemented Improvements Tickets
 
-## Implemented Improvements
-
-With the system's reliability significantly enhanced, we shifted our focus to implementing several crucial improvements:
+With the system's reliability significantly enhanced, we shifted our focus to implementing several crucial improvements tickets:
 
 1. **Enhanced Security with HTTPS:**
-   To reinforce the system's security, we prioritised implementing the HTTPS protocol. This crucial step involved deploying an AWS CloudFront CDN and enforcing encrypted communication across all traffic. By transitioning to HTTPS, we significantly enhanced data privacy and ensured the safeguarding of sensitive information exchanged within the system.
+   To bolster the security of the system, our primary focus was on implementing the HTTPS protocol. This pivotal initiative entailed the deployment of an AWS CloudFront CDN to enforce encrypted communication throughout all traffic. The shift to HTTPS played a crucial role in elevating data privacy, ensuring the protection of sensitive information exchanged within the system.
 
-    Collaborating closely with corporate IT, we planned the migration process. Our objective was to minimize downtime during the transition to the new domain. We directed traffic to the new HTTPS-enabled domain, maintaining uninterrupted service for users while fortifying the system's overall security.
+   In close collaboration with corporate IT, we meticulously strategized the migration process with the aim of minimizing downtime during the transition to the new domain. Effectively directing traffic to the newly secured HTTPS-enabled domain, we ensured uninterrupted service for users, simultaneously strengthening the overall security of the system.
 
-2. **X-Ray Results Integration:**
-   Responding to a specific request from hospital nurses, we introduced a feature enabling the saving of X-Ray results directly within the patient notes. Previously, these results were not archived on the HOSP server, and this enhancement streamlined the process, providing a comprehensive patient record. To achieve this, we developed a sophisticated solution leveraging AWS Lambda and Python. We crafted a Lambda function capable of capturing the API response from the screening server. Subsequently, the function initiated a new POST request back to the patient notes endpoint. This request was meticulously designed, incorporating the patient ID within the header and encapsulating the X-Ray results as a structured JSON payload all while making sure the original request was delivered back to user.
+2. **Screening Results Integration:**
+   In response to a specific request from hospital nurses, we implemented a feature that facilitated the direct saving of screening results into patient notes. Previously, these results lacked archival on the HOSP server, and our enhancement streamlined the process, contributing to a more comprehensive patient record.
+
+   To realize this improvement, we devised an intricate solution leveraging AWS Lambda and Python. We developed a Lambda function with the capability to capture the API response from the screening server. Subsequently, the function initiated a new POST request back to the patient notes endpoint. This request was meticulously crafted, incorporating the patient ID within the header and encapsulating the X-Ray results as a structured JSON payload—all while ensuring the seamless delivery of the original request back to the user.
 
 3. **Audit Trail Functionality:**
-   To bolster system transparency and security, we developed an audit trail feature. This functionality allowed system administrators to track and monitor all user activities. By providing an overview of user interactions, it became easier to identify any potential security breaches promptly and take necessary actions. The audit trail feature was implemented using an AWS Lambda function. We established a new API route, designed to query AWS Athena using a specific SQL command against a CloudWatch database. The results of this query were then sent back as a unique URL, allowing them to download the audit trail as a CSV file for detailed analysis.
+   To enhance system transparency and security, we introduced an audit trail feature that empowered system administrators to monitor all user activities closely. This functionality offered a comprehensive overview of user interactions, facilitating the prompt identification of potential security breaches and enabling swift corrective actions.
 
-
+   The implementation of the audit trail feature involved the use of an AWS Lambda function. We created a new API route dedicated to querying AWS Athena with a specific SQL command against a CloudWatch database. The results of this query were subsequently provided as a unique URL, allowing administrators to download the audit trail as a CSV file for in-depth analysis.
 
 ![Improvements diagram](/diagrams/cloudfront-lambdas.jpg)
 
-
-These improvements collectively elevated the system's functionality, user experience, and security standards, ensuring a robust and seamless operation for both hospital staff and patients. By leveraging serverless technology, we ensured the system could effortlessly adapt to growing demands without the hassle of traditional server maintenance. This approach not only enhanced scalability but also significantly reduced operational overheads. Hospital staff and patients benefited from a consistently reliable, high-performing system, allowing them to focus on their core tasks without interruptions.
-
-
-
+These enhancements collectively advanced the system's functionality, user experience, and security standards, establishing a robust and seamless operation for both hospital staff and patients. Through the utilization of serverless technology, we guaranteed the system's effortless adaptation to escalating demands, eliminating the burdens associated with traditional server maintenance. This approach not only improved scalability but also substantially decreased operational overheads. Hospital staff and patients enjoyed the benefits of a consistently reliable, high-performing system, enabling them to concentrate on their core tasks without any interruptions.
 
 ## Final System Diagram
+
 ![Final diagram](/diagrams/Final-diagram.jpg)
-
-
-
